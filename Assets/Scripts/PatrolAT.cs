@@ -1,17 +1,29 @@
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 namespace NodeCanvas.Tasks.Actions {
 
-	public class ThrowAT : ActionTask {
-		public BBParameter<GameObject> mushroom;
-		//float timer;
-		//public float timeLimit = 1f;
+	public class PatrolAT : ActionTask {
+		NavMeshAgent bearAgent;
+		public Transform pointsPar;
+		public BBParameter<Transform> player;
+		public float distance = 10f;
+		public float buffer;
+		public float speed = 3f;
+
+        Transform[] points;
+		int index;
+		
+
 		//Use for initialization. This is called only once in the lifetime of the task.
 		//Return null if init was successfull. Return an error string otherwise
 		protected override string OnInit() {
+			bearAgent = agent.GetComponent<NavMeshAgent>();
+			index = 1;
+			points = pointsPar.GetComponentsInChildren<Transform>();
 			return null;
 		}
 
@@ -19,21 +31,20 @@ namespace NodeCanvas.Tasks.Actions {
 		//Call EndAction() to mark the action as finished, either in success or failure.
 		//EndAction can be called from anywhere.
 		protected override void OnExecute() {
-			//timer = 0;
-		}
+			bearAgent.SetDestination(points[index].position);
+            bearAgent.speed = speed;
+        }
 
 		//Called once per frame while the action is active.
 		protected override void OnUpdate() {
-			//timer += Time.deltaTime;
-			//if (timer > timeLimit)
-			//{
-			//	mushroom.SetActive(false);
-			//	EndAction(true);
-			//}
-			if(Input.GetKey(KeyCode.Space))
+			if(Vector3.Distance(player.value.position, bearAgent.transform.position) < distance)
 			{
-				mushroom.value.SetActive(false);
-				EndAction(true);
+                EndAction(true);
+            }
+			if(Vector3.Distance(bearAgent.transform.position, bearAgent.destination) < buffer)
+			{
+				index = index%(points.Length-1)+1;
+				bearAgent.SetDestination(points[index].position);
 			}
 		}
 

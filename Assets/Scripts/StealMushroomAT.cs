@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace NodeCanvas.Tasks.Actions {
 
-	public class ThrowAT : ActionTask {
-		public BBParameter<GameObject> mushroom;
-		//float timer;
-		//public float timeLimit = 1f;
-		//Use for initialization. This is called only once in the lifetime of the task.
-		//Return null if init was successfull. Return an error string otherwise
-		protected override string OnInit() {
+	public class StealMushroomAT : ActionTask {
+		public BBParameter<GameObject> redMush;
+		public BBParameter<GameObject> whiteMush;
+
+        //Use for initialization. This is called only once in the lifetime of the task.
+        //Return null if init was successfull. Return an error string otherwise
+        protected override string OnInit() {
 			return null;
 		}
 
@@ -19,22 +19,14 @@ namespace NodeCanvas.Tasks.Actions {
 		//Call EndAction() to mark the action as finished, either in success or failure.
 		//EndAction can be called from anywhere.
 		protected override void OnExecute() {
-			//timer = 0;
+			redMush.value.SetActive(false);
+			whiteMush.value.SetActive(false);
+			EndAction(true);
 		}
 
 		//Called once per frame while the action is active.
 		protected override void OnUpdate() {
-			//timer += Time.deltaTime;
-			//if (timer > timeLimit)
-			//{
-			//	mushroom.SetActive(false);
-			//	EndAction(true);
-			//}
-			if(Input.GetKey(KeyCode.Space))
-			{
-				mushroom.value.SetActive(false);
-				EndAction(true);
-			}
+			
 		}
 
 		//Called when the task is disabled.

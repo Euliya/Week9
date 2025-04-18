@@ -1,17 +1,23 @@
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 namespace NodeCanvas.Tasks.Actions {
 
-	public class ThrowAT : ActionTask {
-		public BBParameter<GameObject> mushroom;
-		//float timer;
-		//public float timeLimit = 1f;
+	public class ShowSignAT : ActionTask {
+		NavMeshAgent bearAgent;
+		public GameObject sign;
+		public BBParameter<Transform> player;
+		public float distance = 10f;
+		public float timelimt = 1f;
+		float timer;
+
 		//Use for initialization. This is called only once in the lifetime of the task.
 		//Return null if init was successfull. Return an error string otherwise
 		protected override string OnInit() {
+			bearAgent = agent.GetComponent<NavMeshAgent>();
 			return null;
 		}
 
@@ -19,22 +25,22 @@ namespace NodeCanvas.Tasks.Actions {
 		//Call EndAction() to mark the action as finished, either in success or failure.
 		//EndAction can be called from anywhere.
 		protected override void OnExecute() {
-			//timer = 0;
+			timer = 0;
 		}
 
 		//Called once per frame while the action is active.
 		protected override void OnUpdate() {
-			//timer += Time.deltaTime;
-			//if (timer > timeLimit)
-			//{
-			//	mushroom.SetActive(false);
-			//	EndAction(true);
-			//}
-			if(Input.GetKey(KeyCode.Space))
+			if(Vector3.Distance(player.value.position,bearAgent.transform.position) < distance)
 			{
-				mushroom.value.SetActive(false);
-				EndAction(true);
-			}
+				sign.SetActive(true);
+                timer += Time.deltaTime;
+                if (timer >= timelimt)
+                {
+                    sign.SetActive(false);
+                    EndAction(true);
+                }
+            }
+
 		}
 
 		//Called when the task is disabled.
